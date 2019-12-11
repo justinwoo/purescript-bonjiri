@@ -1,0 +1,17 @@
+{
+  "name": "purescript-bonjiri",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/justinwoo/purescript-bonjiri.git"
+  },
+  "ignore": ["**/.*", "node_modules", "bower_components", "output"],
+  "dependencies": {
+    "purescript-prelude": "^4.1.1",
+    "purescript-effect": "^2.0.1",
+    "purescript-foreign": "^5.0.0"
+  },
+  "devDependencies": {
+    "purescript-assert": "^4.1.0"
+  }
+}
