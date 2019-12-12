@@ -28,6 +28,28 @@ exports.chain = function(dict) {
   };
 };
 
+exports.all = function(dict) {
+  return function(specs) {
+    return function() {
+      return Promise.all(specs.map(spec => spec()));
+    };
+  };
+};
+
+exports.apply = function(dict1) {
+  return function(dict2) {
+    return function(specFn) {
+      return function(specA) {
+        return function() {
+          return Promise.all([specFn(), specA()]).then(function(xs) {
+            return xs[0](xs[1]);
+          });
+        };
+      };
+    };
+  };
+};
+
 exports.catch = function(dict) {
   return function(fn) {
     return function(promiseSpec) {

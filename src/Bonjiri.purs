@@ -1,6 +1,6 @@
 module Bonjiri where
 
-import Prelude
+import Prelude hiding (map, pure, apply)
 
 import Effect (Effect)
 import Foreign (Foreign)
@@ -20,6 +20,9 @@ fromEffect effect = PromiseSpec fn
     fn = coerce effect
     coerce :: Effect (JSPromise a) -> (Unit -> JSPromise a)
     coerce = unsafeCoerce
+
+pure :: forall a. NotJSPromise a => a -> PromiseSpec a
+pure = fromEffect <<< resolve
 
 -- | takes onError, onSuccess, and a PromiseSpec to run a JSPromise
 -- | onError uses Foreign, since any value can be returned from throw
@@ -57,9 +60,33 @@ foreign import catch :: forall a b
   -> PromiseSpec a
   -> PromiseSpec b
 
+-- | Process all promise specs in an array
+foreign import all :: forall a
+   . NotJSPromise a
+  => Array (PromiseSpec a)
+  -> PromiseSpec (Array a)
+
+-- | apply a function to a value inside promise specs
+foreign import apply :: forall a b
+   . NotJSPromise a
+  => NotJSPromise b
+  => PromiseSpec (a -> b)
+  -> PromiseSpec a
+  -> PromiseSpec b
+
 -- | Make sure we don't have JS promises nested
 class NotJSPromise a
 instance notJSPromiseFail ::
   ( Fail (Text "JSPromises cannot be nested due to JS flattening behaviors")
   ) => NotJSPromise (JSPromise a)
 else instance notJSPromiseGood :: NotJSPromise a
+
+-- | Probably unlawful instances
+instance functorPromiseSpec :: Functor PromiseSpec where
+  map = map
+
+instance applyPromiseSpec :: Apply PromiseSpec where
+  apply = apply
+
+instance applicativePromiseSpec :: Applicative PromiseSpec where
+  pure = pure

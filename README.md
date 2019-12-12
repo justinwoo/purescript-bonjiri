@@ -50,10 +50,34 @@ main = do
     do \_ -> fail "Spec should not fail"
     do \actual -> Assert.assertEqual { actual, expected: "hi" }
     spec4
+
+  -- all
+  let spec5 = B.all [spec1, spec1, spec1, spec1]
+
+  B.run
+    do \_ -> fail "Spec should not fail"
+    do \actual -> Assert.assertEqual { actual, expected: [1, 1, 1, 1] }
+    spec5
+
+  -- apply
+  let spec6 = B.apply (B.pure (add 1)) spec1
+
+  B.run
+    do \_ -> fail "Spec should not fail"
+    do \actual -> Assert.assertEqual { actual, expected: 2 }
+    spec6
+
+  -- instances
+  let spec7 = add <$> spec1 <*> spec1
+
+  B.run
+    do \_ -> fail "Spec should not fail"
+    do \actual -> Assert.assertEqual { actual, expected: 2 }
+    spec7
 ```
 
 ## FAQ
 
-### Why are there no instances?
+### Why are there instances?
 
-Please help convince me there are valid instances that can be written here. It does not seem to be the case that you can.
+Convenience. These may not work correctly.
