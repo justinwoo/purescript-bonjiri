@@ -16,6 +16,16 @@ exports.run = function(dict) {
   };
 };
 
+exports.mkPromiseSpec = function(dict) {
+  return function(callback) {
+    return function() {
+      return new Promise(function(res, rej) {
+        callback(res)(rej)();
+      });
+    };
+  };
+};
+
 exports.chain = function(dict) {
   return function(fn) {
     return function(promiseSpec) {

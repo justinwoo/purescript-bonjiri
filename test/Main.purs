@@ -79,3 +79,22 @@ main = do
     do \_ -> fail "Spec should not fail"
     do \actual -> Assert.assertEqual { actual, expected: 2 }
     spec7
+
+  -- make your own
+  let spec8 = B.mkPromiseSpec \res rej -> res 1
+
+  B.run
+    do \_ -> fail "Spec should not fail"
+    do \actual -> Assert.assertEqual { actual, expected: 1 }
+    spec8
+
+  -- make your own 2
+  let spec9 = B.mkPromiseSpec \(res :: Void -> _) rej -> rej (unsafeToForeign "hi")
+
+  B.run
+    do \f ->
+        case runExcept (readString f) of
+          Right actual -> Assert.assertEqual { actual, expected: "hi" }
+          Left _ -> fail "Could not decode error correctly"
+    do \actual -> fail "Spec should fail"
+    spec9

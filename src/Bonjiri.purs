@@ -21,6 +21,12 @@ fromEffect effect = PromiseSpec fn
     coerce :: Effect (JSPromise a) -> (Unit -> JSPromise a)
     coerce = unsafeCoerce
 
+foreign import mkPromiseSpec :: forall a
+   . NotJSPromise a
+  -- callback of resolve, reject
+  => ((a -> Effect Unit) -> (Foreign -> Effect Unit) -> Effect Unit)
+  -> PromiseSpec a
+
 pure :: forall a. NotJSPromise a => a -> PromiseSpec a
 pure = fromEffect <<< resolve
 
