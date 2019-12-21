@@ -2,7 +2,7 @@ module Bonjiri where
 
 import Prelude hiding (map,pure,apply)
 
-import Data.Newtype (class Newtype)
+import Data.Newtype (class Newtype, unwrap)
 import Effect (Effect)
 import Foreign (Foreign)
 import Prim.TypeError (class Fail, Text)
@@ -91,3 +91,6 @@ instance applyPromiseSpec :: Apply PromiseSpec where
 
 instance applicativePromiseSpec :: Applicative PromiseSpec where
   pure = pure
+
+instance bindPromiseSpec :: Bind PromiseSpec where
+  bind ps f = chain (unwrap <<< f) ps
