@@ -5,21 +5,13 @@ import Prelude hiding (map, pure, apply)
 import Effect (Effect)
 import Foreign (Foreign)
 import Prim.TypeError (class Fail, Text)
-import Unsafe.Coerce (unsafeCoerce)
 
 foreign import data JSPromise :: Type -> Type
 
-newtype PromiseSpec a = PromiseSpec (Unit -> JSPromise a)
-
-fromThunk :: forall a. NotJSPromise a => (Unit -> JSPromise a) -> PromiseSpec a
-fromThunk fn = PromiseSpec fn
+newtype PromiseSpec a = PromiseSpec (Effect (JSPromise a))
 
 fromEffect :: forall a. NotJSPromise a => Effect (JSPromise a) -> PromiseSpec a
-fromEffect effect = PromiseSpec fn
-  where
-    fn = coerce effect
-    coerce :: Effect (JSPromise a) -> (Unit -> JSPromise a)
-    coerce = unsafeCoerce
+fromEffect = PromiseSpec
 
 foreign import mkPromiseSpec :: forall a
    . NotJSPromise a
