@@ -1,7 +1,8 @@
 module Bonjiri where
 
-import Prelude hiding (map, pure, apply)
+import Prelude hiding (map,pure,apply)
 
+import Data.Newtype (class Newtype)
 import Effect (Effect)
 import Foreign (Foreign)
 import Prim.TypeError (class Fail, Text)
@@ -80,6 +81,8 @@ instance notJSPromiseFail ::
 else instance notJSPromiseGood :: NotJSPromise a
 
 -- | Probably unlawful instances
+derive instance newtypePromiseSpec :: Newtype (PromiseSpec a) _
+
 instance functorPromiseSpec :: Functor PromiseSpec where
   map = map
 
