@@ -11,7 +11,7 @@ import Effect.Exception (error, throwException)
 import Foreign (readString, unsafeToForeign)
 import Test.Assert as Assert
 
-foreign import thunkPromise :: Unit -> B.JSPromise Int
+foreign import thunkPromise :: Effect (B.JSPromise Int)
 
 fail :: String -> Effect Unit
 fail s = do
@@ -21,7 +21,7 @@ fail s = do
 main :: Effect Unit
 main = do
   -- create a spec from a promise thunk
-  let spec1 = B.fromThunk thunkPromise
+  let spec1 = B.fromEffect thunkPromise
 
   B.run
     do \_ -> fail "Spec should not fail"
