@@ -19,8 +19,17 @@ exports.run = function(dict) {
 exports.mkPromiseSpec = function(dict) {
   return function(callback) {
     return function() {
+      var wrapFn = function(fn) {
+        return function(x) {
+          return function() {
+            return fn(x);
+          };
+        };
+      };
       return new Promise(function(res, rej) {
-        callback(res)(rej)();
+        var wrappedRes = wrapFn(res);
+        var wrappedRej = wrapFn(rej);
+        callback(wrappedRes)(wrappedRej)();
       });
     };
   };
